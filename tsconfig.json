@@ -11,7 +11,8 @@
         "strict": true,
         "baseUrl": "./",
         "incremental": true,
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        "strictPropertyInitialization": false
     },
     "include": [
         "src/**/*"
