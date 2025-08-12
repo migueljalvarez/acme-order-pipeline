@@ -20,6 +20,7 @@ async function bootstrap() {
     swagger.setup(app);
   }
 
+  app.setGlobalPrefix("api/v1");
   await app.listen(appConfig.port ?? 3000);
 }
 bootstrap()
@@ -27,4 +28,7 @@ bootstrap()
     const { APP_PORT } = process.env;
     Logger.log(`Server running on port ${APP_PORT}`);
   })
-  .catch((error) => {});
+  .catch((error) => {
+    Logger.error("Error starting server", error);
+
+  });
