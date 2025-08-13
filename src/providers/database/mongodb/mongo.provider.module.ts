@@ -1,16 +1,27 @@
 import { Module } from "@nestjs/common";
-import { MongooseModule } from "@nestjs/mongoose";
+
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { MONGO_DB_TYPE_ORM_NAME } from "src/common/constants";
 import { MongoConfigModule } from "src/config/database/mongodb/mongo.config.module";
 import { MongoConfigService } from "src/config/database/mongodb/mongo.config.service";
 
 @Module({
   imports: [
-    MongooseModule.forRootAsync({
+    TypeOrmModule.forRootAsync({
+      name: MONGO_DB_TYPE_ORM_NAME,
       imports: [MongoConfigModule],
+      inject: [MongoConfigService],
       useFactory: async (configService: MongoConfigService) => ({
-        uri: `mongodb://${configService.username}:${configService.password}@${configService.host}:${configService.port}/${configService.database}?authSource=admin`,
-        }),
-      inject: [MongoConfigService]
+        type: "mongodb",
+        host: configService.host,
+        username: configService.username,
+        password: configService.password,
+        port: configService.port,
+        synchronize: false,
+        database: configService.database,
+        authSource: "admin",
+        autoLoadEntities: true,
+      }),
     }),
   ],
 })

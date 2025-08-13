@@ -1,7 +1,7 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { Product } from "./entities/product.entity";
+import { In, Repository } from "typeorm";
+import { Product } from "./product.entity";
 import { QueryParams } from "./interfaces/product.interface";
 import ProductMapper from "./mapper/product.mapper";
 import { LoggerProviderService } from "src/providers/logger/logger.provider.service";
@@ -31,7 +31,7 @@ export class ProductService {
       throw error;
     }
   }
-  async findInventoryBySku(sku: string) {
+  async findInventoryBySku(sku: string): Promise<Product> {
     this.logger.log(this.context, `Finding product inventory by SKU: ${sku}`);
     try {
       const product = await this.productRepository.findOne({
@@ -40,12 +40,49 @@ export class ProductService {
       });
       if (!product) {
         throw new Error(`Product with SKU ${sku} not found`);
-        }
-        return ProductMapper.toProductInventory(product);
+      }
+      return ProductMapper.toProductInventory(product);
     } catch (error) {
-        const traceError = error instanceof Error ? error.message : String(error);
-        this.logger.error(this.context, `Error finding inventory for SKU ${sku}`, traceError);
-        throw error;
+      const traceError = error instanceof Error ? error.message : String(error);
+      this.logger.error(
+        this.context,
+        `Error finding inventory for SKU ${sku}`,
+        traceError
+      );
+      throw error;
+    }
+  }
+  async findBySkus(skus: string[]): Promise<Product[]> {
+    this.logger.log(
+      this.context,
+      `Finding products by SKUs: ${skus.join(", ")}`
+    );
+    try {
+      const products = await this.productRepository.find({
+        where: { sku: In(skus) },
+        relations: ["inventory"],
+      });
+
+      const foundSkus = products.map((p) => p.sku);
+      const skusNotFound = skus.filter((sku) => !foundSkus.includes(sku));
+
+      if (skusNotFound.length > 0) {
+        throw new NotFoundException({
+          error: "product_not_found",
+          message: `Product with SKU ${skusNotFound[0]} not found`,
+          code: 404,
+        });
+      }
+      return products;
+    } catch (error) {
+      const traceError = error instanceof Error ? error.message : String(error);
+      this.logger.error(
+        this.context,
+        "Error finding products by SKUs",
+        traceError
+      );
+
+      throw error;
     }
   }
 }

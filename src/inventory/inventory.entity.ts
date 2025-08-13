@@ -1,3 +1,4 @@
+import { Product } from "src/products/product.entity";
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -7,7 +8,7 @@ import {
   JoinColumn,
   BaseEntity,
 } from "typeorm";
-import { Product } from "./product.entity";
+
 
 @Entity({ name: "inventory" })
 export class Inventory extends BaseEntity {

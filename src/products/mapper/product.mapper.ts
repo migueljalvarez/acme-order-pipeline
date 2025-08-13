@@ -1,4 +1,4 @@
-import { Product } from "../entities/product.entity";
+import { Product } from "../product.entity";
 import { LoggerProviderService } from "src/providers/logger/logger.provider.service";
 const logger = new LoggerProviderService();
 export default class ProductMapper {

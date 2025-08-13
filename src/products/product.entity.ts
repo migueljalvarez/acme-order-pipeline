@@ -1,3 +1,4 @@
+import { Inventory } from "src/inventory/inventory.entity";
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -7,7 +8,8 @@ import {
   BaseEntity,
   OneToOne,
 } from "typeorm";
-import { Inventory } from "./inventory.entity";
+
+
 
 @Entity({ name: "product" })
 export class Product extends BaseEntity {
