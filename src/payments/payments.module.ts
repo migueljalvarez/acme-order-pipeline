@@ -1,13 +1,13 @@
-import { Module } from "@nestjs/common";
-import { KafkaProviderModule } from "src/providers/queue/kafka/kafka.provider.module";
-import { PaymentConsumer } from "./payments.controller";
-import { LoggerProviderModule } from "src/providers/logger/logger.provider.module";
-import OrderEventsModule from "src/orders-events/orders-events.module";
-import { PaymentService } from "./payments.service";
+import { Module } from '@nestjs/common';
+import { KafkaProviderModule } from '@/providers/queue/kafka/kafka.provider.module';
+import { PaymentConsumer } from './payments.controller';
+import { LoggerProviderModule } from '@/providers/logger/logger.provider.module';
+import OrderEventsModule from '@/orders-events/orders-events.module';
+import { PaymentService } from './payments.service';
 
 @Module({
   imports: [KafkaProviderModule, LoggerProviderModule, OrderEventsModule],
   controllers: [PaymentConsumer],
-  providers: [PaymentService]
+  providers: [PaymentService],
 })
 export class PaymentModule {}

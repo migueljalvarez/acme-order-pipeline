@@ -1,15 +1,15 @@
-import { Injectable } from "@nestjs/common";
-import { EventType, PaymentStatus } from "src/common/enum";
-import { OrderEventInterface } from "src/orders-events/interfaces/orders-events.interface";
-import { OrderEventService } from "src/orders-events/orders-events.service";
-import { LoggerProviderService } from "src/providers/logger/logger.provider.service";
+import { Injectable } from '@nestjs/common';
+import { EventType, PaymentStatus } from '@/common/enum';
+import { OrderEventInterface } from '@/orders-events/interfaces/orders-events.interface';
+import { OrderEventService } from '@/orders-events/orders-events.service';
+import { LoggerProviderService } from '@/providers/logger/logger.provider.service';
 
 @Injectable()
 export class PaymentService {
   private context: string;
   constructor(
     private readonly logger: LoggerProviderService,
-    private readonly orderEventService: OrderEventService
+    private readonly orderEventService: OrderEventService,
   ) {
     this.context = PaymentService.name;
   }
@@ -18,13 +18,11 @@ export class PaymentService {
     const paymentSuccess = Math.random() > 0.2;
     const { TAX_RATE } = process.env;
 
-    const subtotal: number = Number(
-      event.paymentProcessed?.paymentResult.amount
-    );
+    const subtotal: number = Number(event.paymentProcessed?.paymentResult.amount);
     const tax: number = subtotal * Number(TAX_RATE || 0.1);
     const total: number = subtotal + tax;
 
-    this.logger.log(this.context, "Starting payment process...");
+    this.logger.log(this.context, 'Starting payment process...');
     await this.orderEventService.saveOrderEvent({
       order_id: event.orderId,
       event_type: EventType.PAYMENT_PROCESSED,
@@ -51,10 +49,7 @@ export class PaymentService {
 
       this.logger.log(this.context, `Order ${event.orderId} confirmed`);
 
-      await this.orderEventService.sendToKafka(
-        "order-events",
-        confirmationEvent
-      );
+      await this.orderEventService.sendToKafka('order-events', confirmationEvent);
     } else {
       const failedEvent = {
         eventId: crypto.randomUUID(),
@@ -67,14 +62,11 @@ export class PaymentService {
         orderFailed: {
           orderId: event.orderId,
           reason: PaymentStatus.PAYMENT_FAILED,
-          errorMessage: "Simulated payment failure",
+          errorMessage: 'Simulated payment failure',
         },
       };
-      this.logger.log(
-        this.context,
-        `Order ${event.orderId} failed due to payment`
-      );
-      await this.orderEventService.sendToKafka("order-events", failedEvent);
+      this.logger.log(this.context, `Order ${event.orderId} failed due to payment`);
+      await this.orderEventService.sendToKafka('order-events', failedEvent);
     }
   }
 }

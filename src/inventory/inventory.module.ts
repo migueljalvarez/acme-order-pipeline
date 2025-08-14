@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Inventory } from './inventory.entity';
 import { InventoryService } from './inventory.service';
-import { LoggerProviderModule } from 'src/providers/logger/logger.provider.module';
+import { LoggerProviderModule } from '@/providers/logger/logger.provider.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Inventory]), LoggerProviderModule],

@@ -1,4 +1,4 @@
-import { Inventory } from "src/inventory/inventory.entity";
+import { Inventory } from '@/inventory/inventory.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -7,28 +7,26 @@ import {
   UpdateDateColumn,
   BaseEntity,
   OneToOne,
-} from "typeorm";
+} from 'typeorm';
 
-
-
-@Entity({ name: "product" })
+@Entity({ name: 'product' })
 export class Product extends BaseEntity {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: "varchar", length: 255, unique: true })
+  @Column({ type: 'varchar', length: 255, unique: true })
   name: string;
 
-  @Column({ type: "decimal", precision: 10, scale: 2 })
+  @Column({ type: 'decimal', precision: 10, scale: 2 })
   price: number;
 
-  @Column({ type: "varchar", length: 50, unique: true })
+  @Column({ type: 'varchar', length: 50, unique: true })
   sku: string;
 
-  @CreateDateColumn({ type: "timestamp" })
+  @CreateDateColumn({ type: 'timestamp' })
   created_at: Date;
 
-  @UpdateDateColumn({ type: "timestamp" })
+  @UpdateDateColumn({ type: 'timestamp' })
   updated_at: Date;
   @OneToOne(() => Inventory, (inventory) => inventory.product)
   inventory: Inventory;

@@ -1,7 +1,4 @@
-import {
-  OrderItemDto,
-  OrderPricingDto,
-} from "../../orders/dto/orders-create.dto";
+import { OrderItemDto, OrderPricingDto } from '../../orders/dto/orders-create.dto';
 const { TAX_RATE } = process.env;
 export default class OrderUtils {
   static getPricingDetails(items: OrderItemDto[]): OrderPricingDto {
@@ -16,9 +13,6 @@ export default class OrderUtils {
   }
 
   static calculateSubTotal(items: OrderItemDto[]): number {
-    return items.reduce(
-      (sum, item) => sum + Number(item.price) * item.quantity,
-      0
-    );
+    return items.reduce((sum, item) => sum + Number(item.price) * item.quantity, 0);
   }
 }

@@ -1,8 +1,8 @@
-import * as Joi from "joi";
-import { Module } from "@nestjs/common";
-import kafkaRegister from "./kafka.register";
-import { ConfigModule, ConfigService } from "@nestjs/config";
-import { KafkaConfigService } from "./kafka.config.service";
+import * as Joi from 'joi';
+import { Module } from '@nestjs/common';
+import kafkaRegister from './kafka.register';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { KafkaConfigService } from './kafka.config.service';
 @Module({
   imports: [
     ConfigModule.forRoot({

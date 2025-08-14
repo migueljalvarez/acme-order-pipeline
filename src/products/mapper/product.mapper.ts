@@ -1,14 +1,10 @@
-import { Product } from "../product.entity";
-import { LoggerProviderService } from "src/providers/logger/logger.provider.service";
+import { Product } from '../product.entity';
+import { LoggerProviderService } from '@/providers/logger/logger.provider.service';
 const logger = new LoggerProviderService();
 export default class ProductMapper {
   static context: string = ProductMapper.name;
   static toProducts(productEntity: Partial<Product[]>): Product[] {
-    logger.log(
-      this.context,
-      "Mapping product entity to response format",
-      this.toProducts.name
-    );
+    logger.log(this.context, 'Mapping product entity to response format', this.toProducts.name);
     return productEntity.map((product) => {
       return {
         id: product?.id,
@@ -23,8 +19,8 @@ export default class ProductMapper {
   static toProductInventory(productEntity: Partial<Product>): Product {
     logger.log(
       this.context,
-      "Mapping product entity to inventory response format",
-      this.toProductInventory.name
+      'Mapping product entity to inventory response format',
+      this.toProductInventory.name,
     );
     return {
       sku: productEntity?.sku,

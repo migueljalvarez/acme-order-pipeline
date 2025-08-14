@@ -1,34 +1,34 @@
-import { NestFactory } from "@nestjs/core";
-import { AppModule } from "./modules/app.module";
-import { ConsoleLogger, Logger } from "@nestjs/common";
-import { AppConfigService } from "./config/app/app.config.service";
-import { SwaggerConfigService } from "./config/openapi/swagger/swagger.config.service";
-import { SwaggerConfigModule } from "./config/openapi/swagger/swagger.config.module";
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from '@/modules/app.module';
+import { ConsoleLogger, Logger } from '@nestjs/common';
+import { AppConfigService } from '@/config/app/app.config.service';
+import { SwaggerConfigService } from '@/config/openapi/swagger/swagger.config.service';
+import { SwaggerConfigModule } from '@/config/openapi/swagger/swagger.config.module';
 
-import { HttpExceptionFilter } from "./common/exceptions/http.exception";
-import { MicroserviceOptions } from "@nestjs/microservices";
-import { KafkaConfigService } from "./config/queue/kafka/kafka.config.service";
-import { kafkaConfigObject } from "./config/queue/kafka/kafka.config";
+import { HttpExceptionFilter } from '@/common/exceptions/http.exception';
+import { MicroserviceOptions } from '@nestjs/microservices';
+import { KafkaConfigService } from '@/config/queue/kafka/kafka.config.service';
+import { kafkaConfigObject } from '@/config/queue/kafka/kafka.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: new ConsoleLogger({
-      context: "Main",
+      context: 'Main',
       timestamp: true,
-      logLevels: ["log", "error", "warn", "debug", "verbose"],
+      logLevels: ['log', 'error', 'warn', 'debug', 'verbose'],
     }),
   });
   const appConfig: AppConfigService = app.get(AppConfigService);
   const swaggerConfig: SwaggerConfigService = app.get(SwaggerConfigService);
   const kafkaConfig: KafkaConfigService = app.get(KafkaConfigService);
 
-  if (["local", "development"].includes(appConfig.env)) {
+  if (['local', 'development'].includes(appConfig.env)) {
     const swagger: SwaggerConfigModule = new SwaggerConfigModule(swaggerConfig);
     swagger.setup(app);
   }
 
   app.useGlobalFilters(new HttpExceptionFilter());
-  app.setGlobalPrefix("api/v1");
+  app.setGlobalPrefix('api/v1');
   app.connectMicroservice<MicroserviceOptions>(kafkaConfigObject(kafkaConfig));
 
   await app.startAllMicroservices();
@@ -40,5 +40,5 @@ bootstrap()
     Logger.log(`Server running on port ${APP_PORT}`);
   })
   .catch((error) => {
-    Logger.error("Error starting server", error);
+    Logger.error('Error starting server', error);
   });

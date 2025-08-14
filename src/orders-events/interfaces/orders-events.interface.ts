@@ -1,4 +1,4 @@
-import { Long } from "typeorm";
+import { Long } from 'typeorm';
 
 export interface Timestamp {
   seconds: number | Long; // Long si usas protobufjs Long
