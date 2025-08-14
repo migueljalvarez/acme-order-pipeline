@@ -2,8 +2,12 @@ import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ProductContract } from './contract/product.contract';
 import { Product, QueryParams } from './interfaces/product.interface';
 import { ProductService } from './product.service';
-import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ProductDto } from './dto/product.dto';
+import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ProductDto,
+  ProductInventoryItemDto,
+  ProductInventoryItemNotFoundResponse,
+} from './dto/product.dto';
 import { LoggerProviderService } from '@/providers/logger/logger.provider.service';
 
 @ApiTags('Products')
@@ -16,7 +20,7 @@ export class ProductController implements ProductContract {
   ) {
     this.context = ProductController.name;
   }
-  @ApiOperation({ summary: 'Getting all products' })
+
   @ApiResponse({
     status: 200,
     description: 'Products list',
@@ -39,12 +43,22 @@ export class ProductController implements ProductContract {
     return entities as unknown as Partial<Product[]>;
   }
   @Get('/:sku/inventory')
-  async getProductInventory(@Param('sku') sku: string): Promise<Partial<Product>> {
+  @ApiResponse({
+    type: ProductInventoryItemDto,
+    status: 200,
+  })
+  @ApiResponse({
+    type: ProductInventoryItemNotFoundResponse,
+    status: 404,
+  })
+  async getProductInventory(
+    @Param('sku') sku: string,
+  ): Promise<ProductInventoryItemDto | ProductInventoryItemNotFoundResponse> {
     this.logger.log(this.context, `Getting inventory for product with SKU ${sku}`);
     const product = await this.productService.findInventoryBySku(sku);
     if (!product) {
       throw new Error(`Product with SKU ${sku} not found`);
     }
-    return product as unknown as Partial<Product>;
+    return product;
   }
 }

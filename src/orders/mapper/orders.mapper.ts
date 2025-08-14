@@ -1,8 +1,8 @@
 import { Order } from '../orders.entity';
-import { OrderCreatedResponse } from '../interfaces/orders.interface';
+import { OrderResponseDto } from '../dto/orders-response.dto';
 
 export default class OrderMapper {
-  static toResponse(order: Order): OrderCreatedResponse {
+  static toResponse(order: Order): OrderResponseDto {
     return {
       order_id: order.order_id,
       status: order.status,

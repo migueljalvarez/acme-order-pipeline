@@ -8,6 +8,7 @@ import { OrderEvent } from './orders-events.entity';
 import { OrderCreatedItem, OrderEventInterface } from './interfaces/orders-events.interface';
 import OrderUtils from '@/common/utils/order.utils';
 import { OrdersService } from '@/orders/orders.service';
+import { OrderByOrderIdResponseDto } from '@/orders/dto/orders-response.dto';
 
 @Injectable()
 export class OrderEventStrategyService {
@@ -54,7 +55,7 @@ export class OrderEventStrategyService {
     const { subtotal } = OrderUtils.getPricingDetails(
       event.orderCreated?.items as OrderCreatedItem[],
     );
-    const order = await this.orderService.findOrder(event.orderId);
+    const order = await this.getProductsByOrder(event.orderId);
     const paymentEvent = {
       eventId: crypto.randomUUID(),
       orderId: event.orderId,
@@ -83,7 +84,7 @@ export class OrderEventStrategyService {
       event_type: EventType.ORDER_CONFIRMED,
       timestamp: new Date(),
     });
-    const order = await this.orderService.findOrder(event.orderId);
+    const order = await this.getProductsByOrder(event.orderId);
     const products = order.items.map((item) => ({
       productId: item.product_id,
       quantity: item.quantity,
@@ -94,7 +95,7 @@ export class OrderEventStrategyService {
 
   private async handleOrderFailed(event: OrderEventInterface) {
     this.logger.log(this.context, `Order failed ${event.orderId}`);
-    const order = await this.orderService.findOrder(event.orderId);
+     const order = await this.getProductsByOrder(event.orderId);
     const products = order.items.map((item) => ({
       productId: item.product_id,
       quantity: item.quantity,
@@ -109,6 +110,9 @@ export class OrderEventStrategyService {
     this.logger.log(this.context, `Order failed ${event.orderId}`);
   }
 
+  private async getProductsByOrder(orderId: string) {
+    return (await this.orderService.findOrder(orderId)) as OrderByOrderIdResponseDto;
+  }
   public async execute(event: OrderEventInterface) {
     const handlers: Record<number, (event: OrderEventInterface) => Promise<void>> = {
       [EventType.ORDER_CREATED]: this.handleOrderCreated.bind(this),

@@ -5,8 +5,7 @@ export default registerAs('swagger', () => ({
   description: 'API documentation for the Acme Order Pipeline',
   version: 'v1.0',
   envName: 'local',
-  url: process.env.APP_URL,
-  port: process.env.APP_PORT,
+  url: process.env.SWAGGER_URL,
   tag: 'Acme Order Pipeline',
   path: 'api-docs',
 }));

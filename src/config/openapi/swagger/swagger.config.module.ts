@@ -11,7 +11,7 @@ import { SwaggerConfigService } from './swagger.config.service';
     ConfigModule.forRoot({
       load: [swaggerRegister],
       validationSchema: Joi.object({
-        APP_URL: Joi.string().required(),
+        SWAGGER_URL: Joi.string().required(),
       }),
     }),
   ],
@@ -23,7 +23,7 @@ export class SwaggerConfigModule {
 
   setup(app: INestApplication): void {
     const url: URL = new URL(this.configService.url);
-    url.port = this.configService.port.toString();
+    /* url.port = this.configService.port.toString(); */
 
     const options = new DocumentBuilder()
       .setTitle(this.configService.title)

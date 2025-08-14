@@ -5,6 +5,7 @@ import { Product } from './product.entity';
 import { QueryParams } from './interfaces/product.interface';
 import ProductMapper from './mapper/product.mapper';
 import { LoggerProviderService } from '@/providers/logger/logger.provider.service';
+import { ProductInventoryItemDto } from './dto/product.dto';
 
 @Injectable()
 export class ProductService {
@@ -31,7 +32,7 @@ export class ProductService {
       throw error;
     }
   }
-  async findInventoryBySku(sku: string): Promise<Product> {
+  async findInventoryBySku(sku: string): Promise<ProductInventoryItemDto> {
     this.logger.log(this.context, `Finding product inventory by SKU: ${sku}`);
     try {
       const product = await this.productRepository.findOne({
@@ -39,7 +40,7 @@ export class ProductService {
         relations: ['inventory'],
       });
       if (!product) {
-        throw new Error(`Product with SKU ${sku} not found`);
+        throw new NotFoundException(`Product with SKU ${sku} not found`);
       }
       return ProductMapper.toProductInventory(product);
     } catch (error) {

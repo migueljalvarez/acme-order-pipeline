@@ -7,6 +7,7 @@ import { PostgresProviderModule } from '@/providers/database/postgres/postgres.p
 import { MongoProviderModule } from '@/providers/database/mongodb/mongo.provider.module';
 
 import { KafkaProviderModule } from '@/providers/queue/kafka/kafka.provider.module';
+import { LoggerProviderModule } from '@/providers/logger/logger.provider.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { KafkaProviderModule } from '@/providers/queue/kafka/kafka.provider.modu
     PostgresProviderModule,
     MongoProviderModule,
     KafkaProviderModule,
+    LoggerProviderModule
   ],
   controllers: [HealthController],
 })
