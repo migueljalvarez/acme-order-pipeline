@@ -18,6 +18,7 @@ async function bootstrap() {
       logLevels: ['log', 'error', 'warn', 'debug', 'verbose'],
     }),
   });
+  app.enableCors();
   const appConfig: AppConfigService = app.get(AppConfigService);
   const swaggerConfig: SwaggerConfigService = app.get(SwaggerConfigService);
   const kafkaConfig: KafkaConfigService = app.get(KafkaConfigService);

@@ -1,3 +1,4 @@
+import { ProductInventoryItemDto } from '../dto/product.dto';
 import { Product } from '../product.entity';
 import { LoggerProviderService } from '@/providers/logger/logger.provider.service';
 const logger = new LoggerProviderService();
@@ -16,7 +17,7 @@ export default class ProductMapper {
     }) as unknown as Product[];
   }
 
-  static toProductInventory(productEntity: Partial<Product>): Product {
+  static toProductInventory(productEntity: Partial<Product>): ProductInventoryItemDto {
     logger.log(
       this.context,
       'Mapping product entity to inventory response format',
@@ -27,6 +28,6 @@ export default class ProductMapper {
       product_name: productEntity?.name,
       available_quantity: productEntity?.inventory?.available_quantity,
       reserved_quantity: productEntity?.inventory?.reserved_quantity,
-    } as unknown as Product;
+    } as ProductInventoryItemDto;
   }
 }

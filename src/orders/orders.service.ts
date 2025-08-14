@@ -1,4 +1,4 @@
-import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LoggerProviderService } from '@/providers/logger/logger.provider.service';
@@ -7,12 +7,16 @@ import { MongoRepository } from 'typeorm';
 import OrderUtils from '../common/utils/order.utils';
 import { OrderItemDto, OrdersCreateDto } from './dto/orders-create.dto';
 import OrderMapper from './mapper/orders.mapper';
-import { OrderCreatedResponse } from './interfaces/orders.interface';
 import { MONGO_DB_TYPE_ORM_NAME } from '@/common/constants';
 
 import { PB_ORDER_EVENT } from '@/config/queue/protobuf/protobuf.token';
 import * as protobuf from 'protobufjs';
 import { EventType } from '@/common/enum';
+import {
+  OrderByOrderIdNotFoundResponse,
+  OrderByOrderIdResponseDto,
+  OrderResponseDto,
+} from './dto/orders-response.dto';
 
 @Injectable()
 export class OrdersService implements OnModuleInit {
@@ -29,7 +33,7 @@ export class OrdersService implements OnModuleInit {
   async onModuleInit() {
     await this.kafkaClient.connect();
   }
-  async createOrder(orderData: OrdersCreateDto): Promise<OrderCreatedResponse> {
+  async createOrder(orderData: OrdersCreateDto): Promise<OrderResponseDto> {
     this.logger.log(this.context, `Publishing order created event`);
     const newOrderId = `ORD-${new Date().getFullYear()}-${Math.floor(Math.random() * 1000000)}`;
     const transactionId = `txn-${new Date().getFullYear()}-${Math.floor(Math.random() * 1000000)}`;
@@ -107,9 +111,16 @@ export class OrdersService implements OnModuleInit {
     this.logger.log(this.context, `Order: ${orderId} Completed`);
   }
 
-  async findOrder(orderId: string) {
-    return (await this.orderRepository.findOne({
+  async findOrder(
+    orderId: string,
+  ): Promise<OrderByOrderIdResponseDto | OrderByOrderIdNotFoundResponse> {
+    const order = (await this.orderRepository.findOne({
       where: { order_id: orderId },
-    })) as Order;
+    })) as unknown as OrderByOrderIdResponseDto;
+    if (!order) {
+      this.logger.warn(this.context, `Order with OrderId ${orderId} not found`);
+      throw new NotFoundException(`Order with OrderId ${orderId} not found`);
+    }
+    return order;
   }
 }

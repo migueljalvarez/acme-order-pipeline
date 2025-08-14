@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { DEFAULT_PORT } from '@/common/constants/';
 
 @Injectable()
 export class SwaggerConfigService {
@@ -21,9 +20,7 @@ export class SwaggerConfigService {
   get url(): string {
     return this.configService.get<string>('swagger.url') ?? '';
   }
-  get port(): number {
-    return this.configService.get<number>('swagger.port') ?? DEFAULT_PORT;
-  }
+
   get tag(): string {
     return this.configService.get<string>('swagger.tag') ?? '';
   }
