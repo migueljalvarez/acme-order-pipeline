@@ -10,4 +10,7 @@ export class KafkaConfigService {
     get clientId(): string {
         return this.configService.get<string>("kafka.clientId") ?? "";
     }
+    get groupId(): string {
+        return this.configService.get<string>("kafka.groupId") ?? "";
+    }
 }

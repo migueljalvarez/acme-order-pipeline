@@ -10,6 +10,7 @@ import { KafkaConfigService } from "./kafka.config.service";
       validationSchema: Joi.object({
         KAFKA_BROKERS: Joi.string().required(),
         KAFKA_CLIENT_ID: Joi.string().required(),
+        KAFKA_GROUP_ID: Joi.string().required(),
       }),
     }),
   ],

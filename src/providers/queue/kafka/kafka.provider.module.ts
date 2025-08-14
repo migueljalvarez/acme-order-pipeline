@@ -1,5 +1,6 @@
 import { Global, Module } from "@nestjs/common";
 import { ClientsModule, Transport } from "@nestjs/microservices";
+
 import { KafkaConfigModule } from "src/config/queue/kafka/kafka.config.module";
 import { KafkaConfigService } from "src/config/queue/kafka/kafka.config.service";
 @Global()
@@ -19,6 +20,13 @@ import { KafkaConfigService } from "src/config/queue/kafka/kafka.config.service"
                 ? kafkaConfigService.brokers
                 : [kafkaConfigService.brokers],
             },
+            consumer: {
+              groupId: kafkaConfigService.groupId,
+              sessionTimeout: 30000,
+              heartbeatInterval: 3000,
+            },
+
+            deserialize: (data: any) => data,
           },
         }),
       },
