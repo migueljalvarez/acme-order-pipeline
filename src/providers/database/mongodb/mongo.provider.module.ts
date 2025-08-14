@@ -1,9 +1,9 @@
-import { Module } from "@nestjs/common";
+import { Module } from '@nestjs/common';
 
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { MONGO_DB_TYPE_ORM_NAME } from "src/common/constants";
-import { MongoConfigModule } from "src/config/database/mongodb/mongo.config.module";
-import { MongoConfigService } from "src/config/database/mongodb/mongo.config.service";
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { MONGO_DB_TYPE_ORM_NAME } from '@/common/constants';
+import { MongoConfigModule } from '@/config/database/mongodb/mongo.config.module';
+import { MongoConfigService } from '@/config/database/mongodb/mongo.config.service';
 
 @Module({
   imports: [
@@ -12,14 +12,14 @@ import { MongoConfigService } from "src/config/database/mongodb/mongo.config.ser
       imports: [MongoConfigModule],
       inject: [MongoConfigService],
       useFactory: async (configService: MongoConfigService) => ({
-        type: "mongodb",
+        type: 'mongodb',
         host: configService.host,
         username: configService.username,
         password: configService.password,
         port: configService.port,
         synchronize: false,
         database: configService.database,
-        authSource: "admin",
+        authSource: 'admin',
         autoLoadEntities: true,
       }),
     }),

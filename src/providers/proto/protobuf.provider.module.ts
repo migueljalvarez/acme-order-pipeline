@@ -1,6 +1,6 @@
-import { Global, Module } from "@nestjs/common";
-import * as path from "path";
-import * as protobuf from "protobufjs";
+import { Global, Module } from '@nestjs/common';
+import * as path from 'path';
+import * as protobuf from 'protobufjs';
 import {
   PROTOBUF_ROOT,
   PB_ORDER_EVENT,
@@ -8,7 +8,7 @@ import {
   PB_PAYMENT_PROCESSED,
   PB_ORDER_CONFIRMED,
   PB_ORDER_FAILED,
-} from "src/config/queue/protobuf/protobuf.token";
+} from '@/config/queue/protobuf/protobuf.token';
 
 @Global()
 @Module({
@@ -17,44 +17,35 @@ import {
     {
       provide: PROTOBUF_ROOT,
       useFactory: async () => {
-        const protoPath = path.resolve(
-          process.cwd(),
-          "proto",
-          "order_events.proto"
-        );
+        const protoPath = path.resolve(process.cwd(), 'proto', 'order_events.proto');
         return protobuf.load(protoPath);
       },
     },
     // Tipo padre: OrderEvent
     {
       provide: PB_ORDER_EVENT,
-      useFactory: (root: protobuf.Root) =>
-        root.lookupType("ecommerce.orders.OrderEvent"),
+      useFactory: (root: protobuf.Root) => root.lookupType('ecommerce.orders.OrderEvent'),
       inject: [PROTOBUF_ROOT],
     },
     // Tipos hijos
     {
       provide: PB_ORDER_CREATED,
-      useFactory: (root: protobuf.Root) =>
-        root.lookupType("ecommerce.orders.OrderCreated"),
+      useFactory: (root: protobuf.Root) => root.lookupType('ecommerce.orders.OrderCreated'),
       inject: [PROTOBUF_ROOT],
     },
     {
       provide: PB_PAYMENT_PROCESSED,
-      useFactory: (root: protobuf.Root) =>
-        root.lookupType("ecommerce.orders.PaymentProcessed"),
+      useFactory: (root: protobuf.Root) => root.lookupType('ecommerce.orders.PaymentProcessed'),
       inject: [PROTOBUF_ROOT],
     },
     {
       provide: PB_ORDER_CONFIRMED,
-      useFactory: (root: protobuf.Root) =>
-        root.lookupType("ecommerce.orders.OrderConfirmed"),
+      useFactory: (root: protobuf.Root) => root.lookupType('ecommerce.orders.OrderConfirmed'),
       inject: [PROTOBUF_ROOT],
     },
     {
       provide: PB_ORDER_FAILED,
-      useFactory: (root: protobuf.Root) =>
-        root.lookupType("ecommerce.orders.OrderFailed"),
+      useFactory: (root: protobuf.Root) => root.lookupType('ecommerce.orders.OrderFailed'),
       inject: [PROTOBUF_ROOT],
     },
   ],

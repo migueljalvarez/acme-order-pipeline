@@ -1,26 +1,23 @@
-import { BadRequestException, Body, Controller, Post } from "@nestjs/common";
-import { OrdersCreateDto } from "./dto/orders-create.dto";
-import { LoggerProviderService } from "src/providers/logger/logger.provider.service";
-import { ProductService } from "src/products/product.service";
-import { Product } from "src/products/interfaces/product.interface";
-import { OrdersService } from "./orders.service";
+import { BadRequestException, Body, Controller, Post } from '@nestjs/common';
+import { OrdersCreateDto } from './dto/orders-create.dto';
+import { LoggerProviderService } from '@/providers/logger/logger.provider.service';
+import { ProductService } from '@/products/product.service';
+import { Product } from '@/products/interfaces/product.interface';
+import { OrdersService } from './orders.service';
 
-@Controller("orders")
+@Controller('orders')
 export class OrdersController {
   private context: string;
   constructor(
     private readonly logger: LoggerProviderService,
     private readonly productService: ProductService,
-    private readonly ordersService: OrdersService
+    private readonly ordersService: OrdersService,
   ) {
     this.context = OrdersController.name;
   }
-  @Post("/")
+  @Post('/')
   async createOrder(@Body() orderData: OrdersCreateDto) {
-    this.logger.log(
-      this.context,
-      `Creating order for customer: ${orderData.customer.user_id}`
-    );
+    this.logger.log(this.context, `Creating order for customer: ${orderData.customer.user_id}`);
     try {
       const skuList: string[] = orderData.items.map((item) => item.sku);
       const products: Product[] = await this.productService.findBySkus(skuList);
@@ -33,12 +30,10 @@ export class OrdersController {
         item.price = Number(product?.price);
         item.product_id = product?.id;
         item.name = product?.name;
-        const availableQuantity: number = Number(
-          product?.inventory?.available_quantity
-        );
+        const availableQuantity: number = Number(product?.inventory?.available_quantity);
         if (item.quantity > availableQuantity) {
           throw new BadRequestException({
-            error: "insufficient_inventory",
+            error: 'insufficient_inventory',
             message: `Not enough inventory for ${item.sku}. Available: ${availableQuantity}, Requested: ${item.quantity}`,
             code: 400,
           });

@@ -1,4 +1,4 @@
-import { Product } from "src/products/product.entity";
+import { Product } from '@/products/product.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -7,27 +7,26 @@ import {
   ManyToOne,
   JoinColumn,
   BaseEntity,
-} from "typeorm";
+} from 'typeorm';
 
-
-@Entity({ name: "inventory" })
+@Entity({ name: 'inventory' })
 export class Inventory extends BaseEntity {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column({ type: "uuid", unique: true })
+  @Column({ type: 'uuid', unique: true })
   product_id!: string;
 
-  @ManyToOne(() => Product, { onDelete: "CASCADE" })
-  @JoinColumn({ name: "product_id" })
+  @ManyToOne(() => Product, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'product_id' })
   product!: Product;
 
-  @Column({ type: "integer", name: "available_quantity" })
+  @Column({ type: 'integer', name: 'available_quantity' })
   available_quantity!: number;
 
-  @Column({ type: "integer", name: "reserved_quantity", default: 0 })
+  @Column({ type: 'integer', name: 'reserved_quantity', default: 0 })
   reserved_quantity!: number;
 
-  @CreateDateColumn({ type: "timestamp", name: "last_updated" })
+  @CreateDateColumn({ type: 'timestamp', name: 'last_updated' })
   last_updated!: Date;
 }

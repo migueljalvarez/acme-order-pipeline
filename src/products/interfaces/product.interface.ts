@@ -1,4 +1,4 @@
-import { Inventory } from "src/inventory/interfaces/inventory.interface";
+import { Inventory } from '@/inventory/interfaces/inventory.interface';
 
 export interface Product {
   id: string;

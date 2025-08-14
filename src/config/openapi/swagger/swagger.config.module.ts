@@ -1,10 +1,10 @@
-import * as Joi from "joi";
-import { INestApplication, Module } from "@nestjs/common";
-import { ConfigModule, ConfigService } from "@nestjs/config";
+import * as Joi from 'joi';
+import { INestApplication, Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
-import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
-import swaggerRegister from "./swagger.register";
-import { SwaggerConfigService } from "./swagger.config.service";
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import swaggerRegister from './swagger.register';
+import { SwaggerConfigService } from './swagger.config.service';
 
 @Module({
   imports: [

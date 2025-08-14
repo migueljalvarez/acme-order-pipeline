@@ -1,18 +1,16 @@
-import { ConsoleLogger, Logger } from "@nestjs/common";
+import { ConsoleLogger, Logger } from '@nestjs/common';
 
 export class LoggerProviderService extends Logger {
-  private readonly logger;
+  private readonly logger: ConsoleLogger;
   constructor() {
     super();
     this.logger = new ConsoleLogger();
   }
 
-  log(context: string, message: string, method?: string | null, data?: any) {
+  log(context: string, message: string, method?: string | null, data?: object) {
     const msg: string = data
-      ? `${method ? "method: " + method : ""} : ${message} : ${JSON.stringify(
-          data
-        )}`
-      : `${method ? "method: " + method : ""} : ${message}`;
+      ? `${method ? 'method: ' + method : ''} : ${message} : ${JSON.stringify(data)}`
+      : `${method ? 'method: ' + method : ''} : ${message}`;
     this.logger.log(msg, context);
   }
 
@@ -20,16 +18,14 @@ export class LoggerProviderService extends Logger {
     this.logger.error(message, trace, context);
   }
 
-  warn(context: string, message: string ) {
+  warn(context: string, message: string) {
     this.logger.warn(message, context);
   }
 
-  debug(context: string, message: string, method?: string | null, data?: any) {
-     const msg: string = data
-       ? `${method ? "method: " + method : ""} : ${message} : ${JSON.stringify(
-           data
-         )}`
-       : `${method ? "method: " + method : ""} : ${message}`;
+  debug(context: string, message: string, method?: string | null, data?: object) {
+    const msg: string = data
+      ? `${method ? 'method: ' + method : ''} : ${message} : ${JSON.stringify(data)}`
+      : `${method ? 'method: ' + method : ''} : ${message}`;
     this.logger.debug(msg, context);
   }
 }

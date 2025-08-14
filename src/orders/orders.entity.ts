@@ -1,5 +1,5 @@
-import { Entity, ObjectIdColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
-import { ObjectId } from "mongodb";
+import { Entity, ObjectIdColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { ObjectId } from 'mongodb';
 export class Customer {
   @Column()
   user_id: string;
@@ -47,7 +47,7 @@ export class Payment {
   processed_at?: Date;
 }
 
-@Entity("orders")
+@Entity('orders')
 export class Order {
   @ObjectIdColumn()
   _id: ObjectId;

@@ -1,5 +1,5 @@
-import { KafkaOptions, Transport } from "@nestjs/microservices";
-import { KafkaConfigService } from "./kafka.config.service";
+import { KafkaOptions, Transport } from '@nestjs/microservices';
+import { KafkaConfigService } from './kafka.config.service';
 
 export const kafkaConfigObject = (kafkaConfig: KafkaConfigService) =>
   ({
@@ -7,9 +7,7 @@ export const kafkaConfigObject = (kafkaConfig: KafkaConfigService) =>
     options: {
       client: {
         clientId: kafkaConfig.clientId,
-        brokers: Array.isArray(kafkaConfig.brokers)
-          ? kafkaConfig.brokers
-          : [kafkaConfig.brokers],
+        brokers: Array.isArray(kafkaConfig.brokers) ? kafkaConfig.brokers : [kafkaConfig.brokers],
       },
       consumer: {
         groupId: kafkaConfig.groupId,
@@ -17,6 +15,6 @@ export const kafkaConfigObject = (kafkaConfig: KafkaConfigService) =>
         sessionTimeout: 30000,
         fromBeginning: true,
       },
-      deserialize: (data: any) => data,
+      deserialize: (data: object) => data,
     },
-  } as KafkaOptions); ;
+  }) as KafkaOptions;

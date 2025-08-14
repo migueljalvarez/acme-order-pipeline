@@ -1,15 +1,15 @@
-import { Global, Module } from "@nestjs/common";
-import { ClientsModule, Transport } from "@nestjs/microservices";
+import { Global, Module } from '@nestjs/common';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
-import { KafkaConfigModule } from "src/config/queue/kafka/kafka.config.module";
-import { KafkaConfigService } from "src/config/queue/kafka/kafka.config.service";
+import { KafkaConfigModule } from '@/config/queue/kafka/kafka.config.module';
+import { KafkaConfigService } from '@/config/queue/kafka/kafka.config.service';
 @Global()
 @Module({
   imports: [
     ClientsModule.registerAsync([
       {
         imports: [KafkaConfigModule],
-        name: "KAFKA_SERVICE",
+        name: 'KAFKA_SERVICE',
         inject: [KafkaConfigService],
         useFactory: async (kafkaConfigService: KafkaConfigService) => ({
           transport: Transport.KAFKA,
@@ -26,7 +26,7 @@ import { KafkaConfigService } from "src/config/queue/kafka/kafka.config.service"
               heartbeatInterval: 3000,
             },
 
-            deserialize: (data: any) => data,
+            deserialize: (data: object) => data,
           },
         }),
       },

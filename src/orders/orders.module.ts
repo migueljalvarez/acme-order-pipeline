@@ -1,12 +1,12 @@
-import { Module } from "@nestjs/common";
-import { OrdersController } from "./orders.controller";
-import { LoggerProviderModule } from "src/providers/logger/logger.provider.module";
-import { OrdersService } from "./orders.service";
-import { ProductModule } from "src/products/product.module";
+import { Module } from '@nestjs/common';
+import { OrdersController } from './orders.controller';
+import { LoggerProviderModule } from '@/providers/logger/logger.provider.module';
+import { OrdersService } from './orders.service';
+import { ProductModule } from '@/products/product.module';
 
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { Order } from "./orders.entity";
-import { MONGO_DB_TYPE_ORM_NAME } from "src/common/constants";
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Order } from './orders.entity';
+import { MONGO_DB_TYPE_ORM_NAME } from '@/common/constants';
 
 @Module({
   imports: [

@@ -1,10 +1,10 @@
-import { EventType } from "src/common/enum";
-import { Entity, ObjectIdColumn, ObjectId, Column, Index } from "typeorm";
+import { EventType } from '@/common/enum';
+import { Entity, ObjectIdColumn, ObjectId, Column, Index } from 'typeorm';
 
-@Entity("order_events")
-@Index(["order_id", "timestamp"])
-@Index(["event_type"])
-@Index(["timestamp"])
+@Entity('order_events')
+@Index(['order_id', 'timestamp'])
+@Index(['event_type'])
+@Index(['timestamp'])
 export class OrderEvent {
   @ObjectIdColumn()
   _id: ObjectId;
