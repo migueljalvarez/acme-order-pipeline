@@ -25,9 +25,7 @@ import { KafkaConfigService } from "src/config/queue/kafka/kafka.config.service"
               sessionTimeout: 30000,
               heartbeatInterval: 3000,
             },
-            producer: {
-              allowAutoTopicCreation: true,
-            },
+
             deserialize: (data: any) => data,
           },
         }),

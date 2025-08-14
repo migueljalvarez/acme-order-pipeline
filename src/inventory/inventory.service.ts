@@ -17,16 +17,16 @@ export class InventoryService {
   }
 
   async reserve(
-    reservedProducts: { id: string; quantity: number }[]
+    reservedProducts: { productId: string; quantity: number }[]
   ): Promise<Inventory[]> {
     const inventoriesUpdated: Inventory[] = [];
     for await (const reserved of reservedProducts) {
       this.logger.log(
         this.context,
-        `Reserving ${reserved.quantity} units for product ID: ${reserved.id}`
+        `Reserving ${reserved.quantity} units for product ID: ${reserved.productId}`
       );
       const inventory = (await this.inventoryRepository.findOne({
-        where: { product_id: reserved.id },
+        where: { product_id: reserved.productId },
       })) as unknown as Inventory;
       inventory.reserved_quantity += reserved.quantity;
       const inventoryUpdated = await inventory.save();

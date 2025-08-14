@@ -45,6 +45,9 @@ export class OrderPricingDto {
 }
 export class OrderPaymentDto {
   status: string;
+  transaction_id: string;
+  processed_at: Date
+
 }
 export class OrdersCreateDto {
   @ApiProperty({
@@ -77,5 +80,5 @@ export class OrdersCreateDto {
   pricing?: OrderPricingDto;
 
   @ApiProperty({ type: [OrderPaymentDto] })
-  payment?: OrderPaymentDto;
+  payment: OrderPaymentDto;
 }

@@ -1,50 +1,42 @@
 import { Controller, Inject } from "@nestjs/common";
-import {
-  Ctx,
-  KafkaContext,
-  MessagePattern,
-  Payload,
-} from "@nestjs/microservices";
+import { MessagePattern, Payload } from "@nestjs/microservices";
 
 import { PB_ORDER_EVENT } from "src/config/queue/protobuf/protobuf.token";
-import { OrdersService } from "src/orders/orders.service";
+
 import { LoggerProviderService } from "src/providers/logger/logger.provider.service";
 import * as protobuf from "protobufjs";
+import { OrderEventInterface } from "src/orders-events/interfaces/orders-events.interface";
+import { PaymentService } from "./payments.service";
+
 @Controller()
 export class PaymentConsumer {
   private context: string;
   constructor(
     @Inject(PB_ORDER_EVENT) private readonly orderEventType: protobuf.Type,
     private readonly logger: LoggerProviderService,
-    private readonly orderService: OrdersService
+    private readonly paymentService: PaymentService
   ) {
     this.context = PaymentConsumer.name;
   }
-  @MessagePattern("order-events")
-  handleOrderCreated(
-    @Payload() message: Base64URLString,
-    @Ctx() context: KafkaContext
-  ) {
+  @MessagePattern("payment-events")
+  async handlePaymentProcess(@Payload() message: Base64URLString) {
     const buffer = Buffer.from(message, "base64");
 
     try {
       const decoded = this.orderEventType.decode(buffer);
-      const order = this.orderEventType.toObject(decoded);
-
+      const event = this.orderEventType.toObject(
+        decoded
+      ) as OrderEventInterface;
       this.logger.log(
         this.context,
-        "Order received",
-        this.handleOrderCreated.name,
-        order
+        "Payment process received",
+        this.handlePaymentProcess.name,
+        event
       );
-      const topic = context.getTopic();
-      const partition = context.getPartition();
 
-      this.logger.log(
-        this.context,
-        `Message from topic: ${topic}, partition ${partition}`
-      );
+      await this.paymentService.start(event);
     } catch (error) {
+      console.log(error);
       this.logger.error(this.context, JSON.stringify(error));
     }
   }

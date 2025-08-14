@@ -4,7 +4,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { LoggerProviderService } from "src/providers/logger/logger.provider.service";
 import { Order } from "./orders.entity";
 import { MongoRepository } from "typeorm";
-import OrderUtils from "./utils/order.utils";
+import OrderUtils from "../common/utils/order.utils";
 import { OrderItemDto, OrdersCreateDto } from "./dto/orders-create.dto";
 import OrderMapper from "./mapper/orders.mapper";
 import { OrderCreatedResponse } from "./interfaces/orders.interface";
@@ -12,6 +12,7 @@ import { MONGO_DB_TYPE_ORM_NAME } from "src/common/constants";
 
 import { PB_ORDER_EVENT } from "src/config/queue/protobuf/protobuf.token";
 import * as protobuf from "protobufjs";
+import { EventType } from "src/common/enum";
 
 @Injectable()
 export class OrdersService implements OnModuleInit {
@@ -31,6 +32,9 @@ export class OrdersService implements OnModuleInit {
   async createOrder(orderData: any): Promise<OrderCreatedResponse> {
     this.logger.log(this.context, `Publishing order created event`);
     const newOrderId = `ORD-${new Date().getFullYear()}-${Math.floor(
+      Math.random() * 1000000
+    )}`;
+    const transactionId = `txn-${new Date().getFullYear()}-${Math.floor(
       Math.random() * 1000000
     )}`;
 
@@ -78,8 +82,12 @@ export class OrdersService implements OnModuleInit {
       status: "processing",
       customer: orderData.customer,
       items: orderData.items,
-      pricing: OrderUtils.getPricingDetails(orderData),
-      payment: { status: "pending" },
+      pricing: OrderUtils.getPricingDetails(orderData.items),
+      payment: {
+        status: "pending",
+        transaction_id: transactionId,
+        processed_at: new Date(),
+      },
     };
 
     this.logger.debug(
@@ -94,5 +102,28 @@ export class OrdersService implements OnModuleInit {
       `Order created successfully with ID: ${createdOrder.order_id}`
     );
     return OrderMapper.toResponse(createdOrder);
+  }
+
+  async completeOrder(orderId: string, eventType: number): Promise<void> {
+    this.logger.log(this.context, `Completing Order: ${orderId}`);
+    const order = (await this.orderRepository.findOne({
+      where: { order_id: orderId },
+    })) as Order;
+    order.status =
+      eventType === EventType.ORDER_CONFIRMED
+        ? "confirmed"
+        : eventType === EventType.ORDER_FAILED
+        ? "failed"
+        : "processing";
+    order.payment.status =
+      eventType === EventType.ORDER_CONFIRMED ? "completed" : "failed";
+    await this.orderRepository.save(order);
+    this.logger.log(this.context, `Order: ${orderId} Completed`);
+  }
+
+  async findOrder(orderId: string) {
+    return (await this.orderRepository.findOne({
+      where: { order_id: orderId },
+    })) as Order;
   }
 }

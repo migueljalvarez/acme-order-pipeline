@@ -1,9 +1,13 @@
-import { OrderItemDto, OrderPricingDto, OrdersCreateDto } from "../dto/orders-create.dto";
+import {
+  OrderItemDto,
+  OrderPricingDto,
+} from "../../orders/dto/orders-create.dto";
 const { TAX_RATE } = process.env;
 export default class OrderUtils {
-  static getPricingDetails(order: OrdersCreateDto): OrderPricingDto {
-    const subtotal = this.calculateSubTotal(order.items);
+  static getPricingDetails(items: OrderItemDto[]): OrderPricingDto {
+    const subtotal = this.calculateSubTotal(items);
     const tax = subtotal * Number(TAX_RATE || 0.1);
+
     return {
       subtotal,
       tax,

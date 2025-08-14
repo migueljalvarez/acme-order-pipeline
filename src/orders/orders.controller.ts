@@ -2,8 +2,6 @@ import { BadRequestException, Body, Controller, Post } from "@nestjs/common";
 import { OrdersCreateDto } from "./dto/orders-create.dto";
 import { LoggerProviderService } from "src/providers/logger/logger.provider.service";
 import { ProductService } from "src/products/product.service";
-
-import { InventoryService } from "src/inventory/inventory.service";
 import { Product } from "src/products/interfaces/product.interface";
 import { OrdersService } from "./orders.service";
 
@@ -13,7 +11,6 @@ export class OrdersController {
   constructor(
     private readonly logger: LoggerProviderService,
     private readonly productService: ProductService,
-    private readonly inventoryService: InventoryService,
     private readonly ordersService: OrdersService
   ) {
     this.context = OrdersController.name;
@@ -52,7 +49,7 @@ export class OrdersController {
         });
         newOrderItems.push(item);
       }
-      await this.inventoryService.reserve(reservedProducts);
+
       return this.ordersService.createOrder({
         ...orderData,
         items: newOrderItems,
