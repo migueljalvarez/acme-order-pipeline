@@ -30,7 +30,7 @@ export class UserController {
   })
   async getOrdersByUser(
     @Param('user_id') userId: string,
-    @Query() query: PaginationDto,
+    @Query() query: Partial<PaginationDto>,
   ): Promise<OrdersPaginatedResponseDto> {
     this.logger.log(
       this.context,
