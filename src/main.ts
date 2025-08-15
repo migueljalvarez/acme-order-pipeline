@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from '@/modules/app.module';
-import { ConsoleLogger, Logger } from '@nestjs/common';
+import { ConsoleLogger, Logger, ValidationPipe } from '@nestjs/common';
 import { AppConfigService } from '@/config/app/app.config.service';
 import { SwaggerConfigService } from '@/config/openapi/swagger/swagger.config.service';
 import { SwaggerConfigModule } from '@/config/openapi/swagger/swagger.config.module';
@@ -28,6 +28,13 @@ async function bootstrap() {
     swagger.setup(app);
   }
 
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  );
   app.useGlobalFilters(new HttpExceptionFilter());
   app.setGlobalPrefix('api/v1');
   app.connectMicroservice<MicroserviceOptions>(kafkaConfigObject(kafkaConfig));
