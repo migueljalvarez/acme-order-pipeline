@@ -17,6 +17,8 @@ import {
   OrderByOrderIdResponseDto,
   OrderResponseDto,
 } from './dto/orders-response.dto';
+import { PaginationDto } from './dto/query.dto';
+import { OrdersPaginatedResponseDto } from './dto/order-summary.dto';
 
 @Injectable()
 export class OrdersService implements OnModuleInit {
@@ -122,5 +124,42 @@ export class OrdersService implements OnModuleInit {
       throw new NotFoundException(`Order with OrderId ${orderId} not found`);
     }
     return order;
+  }
+
+  async findByUser(
+    userId: string,
+    pagination?: PaginationDto,
+  ): Promise<OrdersPaginatedResponseDto> {
+    this.logger.log(
+      this.context,
+      `Finding orders for user_id=${userId} with pagination=${JSON.stringify(pagination)}`,
+    );
+
+    const page = Number(pagination?.page) || 1;
+    const limit = Number(pagination?.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const [orders, total] = await this.orderRepository.findAndCount({
+      where: { 'customer.user_id': userId },
+      skip,
+      take: limit,
+      order: { created_at: 'DESC' },
+    });
+
+    if (!orders.length) {
+      this.logger.warn(this.context, `No orders found for user_id=${userId}`);
+    } else {
+      this.logger.log(this.context, `Found ${orders.length} orders for user_id=${userId}`);
+    }
+
+    return {
+      orders: OrderMapper.ordersToUsers(orders),
+      pagination: {
+        page,
+        limit,
+        total,
+        has_more: page * limit < total,
+      },
+    };
   }
 }
