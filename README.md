@@ -1,54 +1,63 @@
+# Sistema de Procesamiento de Órdenes ACME
+
+## 📋 Requisitos Previos
+- Docker 20.10+
+- Docker Compose 2.0+
+- Node.js 20+
+
+## 🚀 Configuración Inicial
+
+```bash
+# 1. Clonar el repositorio
+git clone https://github.com/migueljalvarez/acme-order-pipeline.git
+cd acme-order-pipeline
+
+# 2. Configurar variables de entorno (basado en tu .env.example exacto)
+cp src/common/environments/.env.example src/common/environments/.env
+````
+
+
 
 ## ⚙️ Variables de Entorno
 
 Ubicación del archivo: `src/common/environments/.env`.
-### Ejecución Local
 
+### Configuración de la Aplicación
 ```
-KAFKA_BROKERS=localhost:9092
-KAFKA_CLIENT_ID=acme-order-pipeline
-KAFKA_GROUP_ID=acme-order-service
-
-APP_ENV=development
-APP_NAME=Acme Order Pipeline
 APP_PORT=9000
 APP_URL=http://localhost:9000
 
-POSTGRES_HOST=localhost
+KAFKA_BROKERS=kafka:29092
+KAFKA_CLIENT_ID=acme-order-pipeline
+KAFKA_GROUP_ID=acme-order-service
+
+POSTGRES_HOST=postgres
 POSTGRES_PORT=5432
 POSTGRES_USERNAME=postgres
 POSTGRES_PASSWORD=postgres123
 POSTGRES_DATABASE=ecommerce_inventory
 
-MONGODB_HOST=localhost  
+MONGODB_HOST=mongodb
 MONGODB_PORT=27017
 MONGODB_USERNAME=admin
 MONGODB_PASSWORD=admin123
 MONGODB_DATABASE=ecommerce_orders
 
-TAX_RATE=0.5
+TAX_RATE= la que corresponda
 KAFKAJS_NO_PARTITIONER_WARNING=1
 
+SWAGGER_URL=http://localhost:3000/api/v1
 ```
-
-### Ejecución con Docker
-
-Para Docker, sustituye `localhost` por los nombres de los servicios definidos en `docker-compose.yml` y comenta las variables locales:
-
 ```
-KAFKA_BROKERS=kafka:29092
-#KAFKA_BROKERS=localhost:9092
-POSTGRES_HOST=postgres
-#POSTGRES_HOST=localhost
-MONGODB_HOST=mongodb
-#MONGODB_HOST=localhost
+# Iniciar todos los servicios (incluye Kafka, PostgreSQL y MongoDB)
+docker-compose up -d --build
 
+# Verificar que todos los servicios estén funcionando
+docker-compose ps
+
+# Detener los servicios
+docker-compose down
 ```
-> **Nota:** El resto de variables (`APP_ENV`, `APP_PORT`, `TAX_RATE`, etc.) se mantiene igual tanto en local como en Docker.
-
-## 🚀 Ejecutando con Docker Compose
-Este proyecto está diseñado para ejecutarse completamente en contenedores usando Docker Compose. A continuación se describen los servicios incluidos y cómo levantarlos.
-
 ## Servicios incluidos
 
 | Servicio            | Imagen / Build                          | Puertos                  | Notas                                                                                                                                                                              |
@@ -75,41 +84,17 @@ kafka_data → /var/lib/kafka/data
 ### Red de contenedores
 Todos los servicios están conectados a la red ecommerce_network (driver bridge), permitiendo comunicación interna entre contenedores usando los nombres de servicio como hostnames (postgres, mongodb, kafka, etc.).
 
-### Comandos principales 
+## Documentación de la API
+Accede a la interfaz de Swagger UI en:
+🔗 http://localhost:9000/api-docs
 
-Levantar todos los servicios:
-```
-docker-compose up -d 
-```
-Ver logs de la app:
-```
-docker-compose logs -f app
-```
-Detener y eliminar contenedores:
-```
-docker-compose stop
-```
+Endpoints principales:
 
-```
-docker-compose rm
-```
+* POST /api/v1/orders - Crear nueva orden
 
-Ver el estado de los contenedores y sus puertos:
+* GET /api/v1/orders/{id} - Consultar estado de orden
 
-```
-docker-compose ps
-```
-
-### Prerrequisitos
-- Docker & Docker Compose
-- Make (opcional)
-
-### Levantamiento
-
-```bash
-docker compose up -d
-make kafka-create-topics
-```
+* GET /api/v1/products/{sku}/inventory - Verificar inventario
 
 ### Verificar que todo esté funcionando
 
