@@ -7,6 +7,7 @@ import { ProductModule } from '@/products/product.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Order } from './orders.entity';
 import { MONGO_DB_TYPE_ORM_NAME } from '@/common/constants';
+import { UserController } from './users.controller';
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { MONGO_DB_TYPE_ORM_NAME } from '@/common/constants';
     LoggerProviderModule,
     ProductModule,
   ],
-  controllers: [OrdersController],
+  controllers: [OrdersController, UserController],
   providers: [OrdersService],
   exports: [OrdersService],
 })
